@@ -3,3 +3,44 @@ server:
 spring:
   application:
     name: API-GATEWAY
+  cloud:
+    nacos:
+      server-addr: localhost:18848
+    gateway:
+      # 配置路由规则
+      routes:
+        # admins router
+        - id: admins_router
+          uri: lb://API-ADMINS
+          predicates:
+            - Path=/admins/demo/**
+          filters:
+            - StripPrefix=1
+        # category router
+        - id: category_router
+          uri: lb://API-CATEGORY
+          predicates:
+            - Path=/category/demo/**
+          filters:
+            - StripPrefix=1
+        # users router
+        - id: users_router
+          uri: lb://API-USERS
+          predicates:
+            - Path=/users/demo/**
+          filters:
+            - StripPrefix=1
+        # videos router
+        - id: videos_router
+          uri: lb://API-VIDEOS
+          predicates:
+            - Path=/videos/demo/**
+          filters:
+            - StripPrefix=1
+      # 配置跨域处理
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"

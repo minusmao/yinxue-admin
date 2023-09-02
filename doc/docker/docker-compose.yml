@@ -1,0 +1,17 @@
+version: "3.9"
+
+networks:
+  yinxue_network:
+
+services:
+  nacos:
+    image: nacos/nacos-server:2.0.2
+    restart: no
+    ports:
+      - "18848:8848"
+    environment:
+      - "JVM_XMS=256m"
+      - "JVM_XMX=256m"
+      - "MODE=standalone"
+    networks:
+      - yinxue_network
