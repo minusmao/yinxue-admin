@@ -1,0 +1,5 @@
+server:
+  port: 10400
+spring:
+  application:
+    name: API-VIDEOS
