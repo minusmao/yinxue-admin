@@ -5,13 +5,47 @@ networks:
 
 services:
   nacos:
-    image: nacos/nacos-server:2.0.2
+    image: nacos/nacos-server:2.0.4-slim
     restart: no
     ports:
       - "18848:8848"
     environment:
-      - "JVM_XMS=256m"
-      - "JVM_XMX=256m"
-      - "MODE=standalone"
+      - TZ=Asia/Shanghai
+      - JVM_XMS=256m
+      - JVM_XMX=256m
+      - MODE=standalone
+    networks:
+      - yinxue_network
+
+  mysql:
+    image: mysql:8.0.33
+    restart: no
+    ports:
+      - "13306:3306"
+    volumes:
+      - ./mysql/conf/:/etc/mysql/conf.d/    # 挂载配置文件（配置文件详情：https://blog.csdn.net/XY1790026787/article/details/104596519）
+      - ./mysql/logs/:/var/log/             # 挂载日志目录
+      - ./mysql/data/:/var/lib/mysql/       # 挂载数据目录
+      - ./mysql/init/yingxue.sql:/docker-entrypoint-initdb.d/yingxue.sql    # 挂载初始化sql（第一次启动会执行该sql文件）
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456          # root用户密码
+      - MYSQL_DATABASE=yingxue              # 创建一个数据库
+    networks:
+      - yinxue_network
+
+  redis:
+    image: redis:7.0.11
+    restart: "no"
+    privileged: true
+    ports:
+      - "16379:6379"
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf    # 可使用文档中的redis.conf自定义密码
+      - ./redis/logs:/logs
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    environment:
+      - TZ=Asia/Shanghai
     networks:
       - yinxue_network
