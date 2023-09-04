@@ -3,8 +3,10 @@ package com.example.service.impl;
 import com.alibaba.druid.util.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.Admin;
+import com.example.model.AdminDTO;
 import com.example.service.AdminService;
 import com.example.mapper.AdminMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -51,6 +53,22 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         result.put("token", token);
         result.put("expire", tokenExpire);
         return result;
+    }
+
+    @Override
+    public AdminDTO admin(String token) {
+        Admin admin = (Admin) redisTemplate.opsForValue().get(token);
+        if (admin == null) {
+            throw new RuntimeException("用户未登录");
+        }
+        AdminDTO adminDTO = new AdminDTO();
+        BeanUtils.copyProperties(admin, adminDTO);
+        return adminDTO;
+    }
+
+    @Override
+    public void logout(String token) {
+        redisTemplate.delete(token);
     }
 
 }
