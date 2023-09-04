@@ -13,7 +13,7 @@ spring:
         - id: admins_router
           uri: lb://API-ADMINS
           predicates:
-            - Path=/admins/demo/**
+            - Path=/admins/demo/**,/admins/tokens/**
           filters:
             - StripPrefix=1
         # category router
